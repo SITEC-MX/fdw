@@ -1,0 +1,25 @@
+{
+    "name": "sitec/fdw",
+    "description": "Framework de Desarrollo Web",
+    "type": "library",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Sistemas Especializados e Innovación Tecnológica, SA de CV",
+            "email": "contacto@sistemasespecializados.com",
+            "homepage": "https://fdw.mpsoft.dev"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": { "Mpsoft\\FDW\\": "src/" },
+        "files": [ "src/FDW.php", "src/macros.php", "src/API.php" ]
+    },
+    "require": {
+        "php": ">=7.3"
+    },
+    "require-dev": {
+        "php": ">=7.3",
+        "phpunit/phpunit": "^9.2"
+    }
+}
