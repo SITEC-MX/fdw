@@ -24,6 +24,15 @@ abstract class Token extends \Mpsoft\FDW\Dato\Elemento
         {
             $token = $this->GenerarTokenAleatorio();
             $this->AsignarValorSinValidacion("token", $token);
+
+            $ip = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER['REMOTE_ADDR'];
+            $this->AsignarValorSinValidacion("ip", $ip);
+
+            $tiempo = time();
+            $this->AsignarValorSinValidacion("creacion_tiempo", $tiempo);
+
+            $vigencia_hasta = $tiempo + $this->ObtenerSegundosDeVigenciaToken();
+            $this->AsignarValorSinValidacion("validohasta_tiempo", $vigencia_hasta);
         }
     }
 
@@ -77,6 +86,11 @@ abstract class Token extends \Mpsoft\FDW\Dato\Elemento
 
 
 
+    protected abstract function ObtenerSegundosDeVigenciaToken():int;
+
+
+
+
 
 
 
@@ -112,7 +126,10 @@ abstract class Token extends \Mpsoft\FDW\Dato\Elemento
         (
             "id" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID", "tipoDeDato" => FDW_DATO_INT),
             "token" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "Token", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>256),
-            "usuario_id" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT)
+            "usuario_id" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
+            "creacion_tiempo" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
+            "validohasta_tiempo" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
+            "ip" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>40)
         );
     }
 }
