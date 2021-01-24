@@ -737,6 +737,7 @@ class BdD extends \Mpsoft\FDW\Dato\BdD
             case FDW_DATO_BDD_OPERADOR_DIFERENTE: $operando !== NULL ? $traduccion = "<>" : $traduccion = "IS NOT"; break;
             case FDW_DATO_BDD_OPERADOR_LIKE: $traduccion = "LIKE"; break;
             case FDW_DATO_BDD_OPERADOR_IN: $traduccion = "IN"; break;
+            case FDW_DATO_BDD_OPERADOR_IGUAL_BINARIO: $traduccion = "= BINARY"; break;
 
             default: throw new BdDException("Operador '{$operador}' no soportado.", get_class($this));
         }
