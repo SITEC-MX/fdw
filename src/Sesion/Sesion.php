@@ -9,6 +9,7 @@ namespace Mpsoft\FDW\Sesion;
 
 use \Mpsoft\FDW\Core\ManejadorDeEventos;
 use \Mpsoft\FDW\Sesion\Usuario;
+use \Mpsoft\FDW\Core\Utilidades;
 
 abstract class Sesion
 {
@@ -44,13 +45,20 @@ abstract class Sesion
 
         if($token) // Si el token se inicia correctamente
         {
-            $this->token = $token;
+            if($this->ValidarTokenReiniciado($token)) // Si el token reiniciado sigue siendo válido
+            {
+                $this->token = $token;
 
-            $this->usuario = $token->ObtenerUsuario();
+                $this->usuario = $token->ObtenerUsuario();
 
-            $sesion_reiniciada = TRUE;
+                $sesion_reiniciada = TRUE;
 
-            $this->manejador_de_eventos->DispararEvento("sesion_reiniciada_correctamente");
+                $this->manejador_de_eventos->DispararEvento("sesion_reiniciada_correctamente");
+            }
+            else // Si el token reiniciado dejó de ser válido
+            {
+                $token->Eliminar();
+            }
         }
 
         return $sesion_reiniciada;
@@ -81,6 +89,21 @@ abstract class Sesion
     protected abstract function CrearToken():Token;
 
     protected abstract function InicializarToken(string $token_str):?Token;
+
+    protected function ValidarTokenReiniciado(Token $token):bool
+    {
+        $token_valido = TRUE;
+
+        // Si la dirección IP registrada cambia el token deja de ser válido
+        $ip_cliente = Utilidades::ObtenerIPCliente();
+        $ip_token = $token->ObtenerValor("ip");
+        if($ip_token != $ip_cliente) // Si la dirección IP del token cambió
+        {
+            $token_valido = FALSE;
+        }
+
+        return $token_valido;
+    }
 
     public function ObtenerToken():?string
     {

@@ -7,6 +7,8 @@
  */
 namespace Mpsoft\FDW\Sesion;
 
+use \Mpsoft\FDW\Core\Utilidades;
+
 abstract class Token extends \Mpsoft\FDW\Dato\Elemento
 {
     /**
@@ -25,7 +27,7 @@ abstract class Token extends \Mpsoft\FDW\Dato\Elemento
             $token = $this->GenerarTokenAleatorio();
             $this->AsignarValorSinValidacion("token", $token);
 
-            $ip = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER['REMOTE_ADDR'];
+            $ip = Utilidades::ObtenerIPCliente();
             $this->AsignarValorSinValidacion("ip", $ip);
 
             $tiempo = time();

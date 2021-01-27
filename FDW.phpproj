@@ -26,6 +26,7 @@
     <Compile Include="src\Core\ManejadorDeEventos.php" />
     <Compile Include="src\Core\OpenAPI.php" />
     <Compile Include="src\Core\Parametro.php" />
+    <Compile Include="src\Core\Utilidades.php" />
     <Compile Include="src\Dato\BdD.php" />
     <Compile Include="src\Dato\BdDException.php" />
     <Compile Include="src\Dato\Elemento.php" />
