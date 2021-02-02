@@ -25,6 +25,12 @@ abstract class Elemento
     private $valores;
 
     /**
+     * Arreglo con los valores originales del Elemento.
+     * @var array
+     */
+    private $valores_originales;
+
+    /**
      * Arreglo con la información de los campos de la tabla. Este campo es llenado por el método _ObtenerInformacionDeCampos()
      * @var array Arreglo con la información de los campos de la tabla (nombre del campo, campo requerido, campo de solo lectura, etc.)
      */
@@ -189,11 +195,6 @@ abstract class Elemento
                 $this->informacionDeCampos[$nombreSQL]["ignorarAlObtenerValores"] = false;
             }
 
-            if (!isset($informacionDeCampo["tienePermisosParaModificar"]))
-            {
-                $this->informacionDeCampos[$nombreSQL]["tienePermisosParaModificar"] = true;
-            }
-
             $this->informacionDeCampos[$nombreSQL]["hayCambios"] = false;
 
             $this->valores[$nombreSQL] = null;
@@ -219,14 +220,7 @@ abstract class Elemento
             {
                 if (!$this->informacionDeCampos[$campo]["soloDeLectura"]) // Si el campo se puede modificar
                 {
-                    if ($this->informacionDeCampos[$campo]["tienePermisosParaModificar"]) // Si el usuario tiene permisos para modificar el campo
-                    {
-                        $this->AsignarValorAlCampo($campo, $valor);
-                    }
-                    else
-                    {
-                        throw new ElementoException("Se intentó asignar un valor al campo '{$campo}' del que no tiene privilegios para modificar.", $this->clase_actual);
-                    }
+                    $this->AsignarValorAlCampo($campo, $valor);
                 }
                 else // Si el campo no se puede moficiar
                 {
@@ -451,6 +445,8 @@ abstract class Elemento
                 $this->valores[$campo_nombre] = BdD::ConvertirATipoDeDato($this->valores[$campo_nombre], $this->informacionDeCampos[$campo_nombre]["tipoDeDato"]);
             }
         }
+
+        $this->valores_originales = $this->valores;
 
         $this->datos_obtenidos = TRUE;
 
@@ -698,6 +694,36 @@ abstract class Elemento
             if(!$this->informacionDeCampos[$indice]["ignorarAlObtenerValores"]) // Si el campo no se debe ignorar al recopilar los valores
             {
                 $valores[$indice] = $valor;
+            }
+        }
+
+        return $valores;
+    }
+
+    protected function ObtenerValoresConCambios():array
+    {
+        $valores = array();
+
+        foreach ($this->informacionDeCampos as $nombreSQL => $informacionDeCampo) // Para cada campo en el Elemento
+        {
+            if($informacionDeCampo["hayCambios"]) // Si el campo tiene cambios
+            {
+                $valores[$nombreSQL] = $this->valores[$nombreSQL];
+            }
+        }
+
+        return $valores;
+    }
+
+    protected function ObtenerValoresOriginalesModificados():array
+    {
+        $valores = array();
+
+        foreach ($this->informacionDeCampos as $nombreSQL => $informacionDeCampo) // Para cada campo en el Elemento
+        {
+            if($informacionDeCampo["hayCambios"]) // Si el campo tiene cambios
+            {
+                $valores[$nombreSQL] = $this->valores_originales[$nombreSQL];
             }
         }
 

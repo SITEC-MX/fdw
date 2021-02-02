@@ -9,6 +9,7 @@ namespace Mpsoft\FDW\Sesion;
 
 use Mpsoft\FDW\Dato\BdD;
 use Exception;
+use \Mpsoft\FDW\Core\Utilidades;
 
 class RateLimit
 {
@@ -32,7 +33,7 @@ class RateLimit
 
         $this->bdd = $bdd;
 
-        $this->ip = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER['REMOTE_ADDR'];
+        $this->ip = Utilidades::ObtenerIPCliente();
         $this->nombre = $nombre;
         $this->tiempo_bloqueo = $tiempo_bloqueo;
 

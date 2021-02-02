@@ -18,7 +18,7 @@ abstract class Sesion
 
     public function __construct()
     {
-        $this->manejador_de_eventos = new ManejadorDeEventos( array("sesion_iniciada_correctamente", "sesion_reiniciada_correctamente") );
+        $this->manejador_de_eventos = new ManejadorDeEventos( array("sesion_iniciada_correctamente", "sesion_reiniciada_correctamente", "sesion_cerrada_correctamente", "antes_de_cerrar_sesion") );
     }
 
     public function IniciarSesion(Usuario $usuario):?Token
@@ -68,7 +68,11 @@ abstract class Sesion
     {
         if($this->SesionIniciada()) // Si la sesión está iniciada
         {
+            $this->manejador_de_eventos->DispararEvento("antes_de_cerrar_sesion");
+
             $this->token->Eliminar();
+
+            $this->manejador_de_eventos->DispararEvento("sesion_cerrada_correctamente");
         }
         else // Si la sesión no está iniciada
         {

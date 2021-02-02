@@ -127,7 +127,7 @@ abstract class Token extends \Mpsoft\FDW\Dato\Elemento
         return array
         (
             "id" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID", "tipoDeDato" => FDW_DATO_INT),
-            "token" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "Token", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>256),
+            "token" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "Token", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>256, "ignorarAlObtenerValores"=>TRUE),
             "usuario_id" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
             "creacion_tiempo" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
             "validohasta_tiempo" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
