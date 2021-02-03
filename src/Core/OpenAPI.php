@@ -91,30 +91,25 @@ abstract class OpenAPI
                 $body_no_proporcionado = NULL;
                 if(isset($metodo_solicitado["body"])) // Si el método tiene campos en POST
                 {
+                    // Obtenemos los parámetros enviados por php://input
+                    $parametros_enviados_con_input = array();
                     $php_input = NULL;
                     $php_input_string = file_get_contents("php://input");
                     if($php_input_string) // Si hay parámetros de entrada mediante php://input
                     {
                         $php_input = json_decode($php_input_string, TRUE);
 
-                        foreach($metodo_solicitado["body"] as $body_nombre=>$body_contenedor) // Para cada campo disponible
-                        {
-                            if( isset($php_input[$body_nombre]) ) // Si se proporciona el campo mediante php://input
-                            {
-                                $body[$body_nombre] = Parametro::LimpiarValor($php_input[$body_nombre], $body_contenedor["tipo"]);
-                            }
-                        }
+                        $parametros_enviados_con_input = OpenAPI::ProcesarBloqueDeVariables($php_input, $metodo_solicitado["body"]);
                     }
-                    else // Si no hay parámetros de entrada mediante php://input
+
+                    // Obtenemos los parámetros enviados con $_POST
+                    $parametros_enviados_con_post = array();
+                    if($_POST) // Si hay parámetros de entrada mediante $_POST
                     {
-                        foreach($metodo_solicitado["body"] as $body_nombre=>$body_contenedor) // Para cada campo disponible
-                        {
-                            if( isset($_POST[$body_nombre]) ) // Si se proporciona el campo mediante $_POST
-                            {
-                                $body[$body_nombre] = Parametro::LimpiarValor($_POST[$body_nombre], $body_contenedor["tipo"]);
-                            }
-                        }
+                        $parametros_enviados_con_post = OpenAPI::ProcesarBloqueDeVariables($_POST, $metodo_solicitado["body"]);
                     }
+
+                    $body = array_merge($parametros_enviados_con_post, $parametros_enviados_con_input);
 
                     // Procesamos los archivos enviados
                     foreach($_FILES as $body_nombre=>$archivo_contenedor) // Para cada archivo proporcionado
@@ -149,6 +144,28 @@ abstract class OpenAPI
         }
 
         return $llamada;
+    }
+
+    private static function ProcesarBloqueDeVariables(array $datos, array $definicion):array
+    {
+        $variables = array();
+
+        foreach($definicion as $variable_nombre=>$variable_contenedor) // Para cada campo disponible
+        {
+            if( isset($datos[$variable_nombre]) ) // Si se proporciona el campo
+            {
+                if($variable_contenedor["tipo"] === FDW_DATO_OBJECT) // Si el tipo es un objeto
+                {
+                    $variables[$variable_nombre] = OpenAPI::ProcesarBloqueDeVariables($datos[$variable_nombre], $definicion[$variable_nombre]["propiedades"]);
+                }
+                else // Si el tipo no es un objeto
+                {
+                    $variables[$variable_nombre] = Parametro::LimpiarValor($datos[$variable_nombre], $variable_contenedor["tipo"]);
+                }
+            }
+        }
+
+        return $variables;
     }
 
     public static function ValidarRespuesta(array $request, array $estado)
