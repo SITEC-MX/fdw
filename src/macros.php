@@ -22,3 +22,11 @@ define("FDW_MODULO_REGISTROS_INVALIDO", 5);             // La cantidad de regist
 define("FDW_MODULO_CAMPO_INEXISTENTE", 6);              // Se solicitó un campo que no existe en el módulo. [ver parámetro: campo]
 define("FDW_MODULO_ORDENAMIENTO_INEXISTENTE", 7);       // Se solicitó un campo de ordenamiento que no existe en el módulo. [ver parámetro: campo]
 define("FDW_MODULO_BUSQUEDA_INEXISTENTE", 8);           // Se solicitó un campo de búsqueda que no existe en el módulo. [ver parámetro: campo]
+
+define("FDW_ELEMENTO_ELIMINAR_ERROR", 9);               // Error al eliminar el Elemento [Ver parámetro: debug]
+
+
+// API
+define("API_FALTA_CAMPO_REQUERIDO", 100);               // Falta un campo requerido para aplicar cambios en el Elemento
+define("API_ELEMENTO_INVALIDO", 101);                   // El Elemento tiene valores que no son válidos
+define("API_ERROR_INICIALIZAR", 102);                   // Error al inicializar el Elemento

@@ -8,10 +8,11 @@
 namespace Mpsoft\FDW\Dato;
 
 use Exception;
+use \Throwable;
 
 class ElementoException extends Exception
 {
-    public function __construct ($message = "", $tipo_Elemento="", $code = 0, $previous = NULL)
+    public function __construct (string $message = "", string $tipo_Elemento="", int $code = 0, Throwable $previous = NULL)
     {
         parent::__construct($message, $code, $previous);
     }

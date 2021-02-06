@@ -100,7 +100,7 @@ abstract class Elemento
         {
             if (!$this->PedirAutorizacion(FDW_DATO_PERMISO_OBTENER))
             {
-                throw new ElementoException("No cuenta con privilegios para obtener los datos del Elemento '{$this->clase_actual}'.", $this->clase_actual);
+                throw new ElementoException("No cuenta con privilegios para obtener los datos del Elemento '{$this->clase_actual}'.", $this->clase_actual, FDW_ELEMENTO_ERROR_INICIALIZAR);
             }
 
             $this->valores["id"] = $id;
@@ -109,7 +109,7 @@ abstract class Elemento
         {
             if (!$this->PedirAutorizacion(FDW_DATO_PERMISO_AGREGAR))
             {
-                throw new ElementoException("No cuenta con permiso para agregar el Elemento '{$this->clase_actual}'.", $this->clase_actual);
+                throw new ElementoException("No cuenta con permiso para agregar el Elemento '{$this->clase_actual}'.", $this->clase_actual, FDW_ELEMENTO_ERROR_INICIALIZAR);
             }
 
             $this->hayCambios = TRUE;
@@ -224,13 +224,13 @@ abstract class Elemento
                 }
                 else // Si el campo no se puede moficiar
                 {
-                    throw new ElementoException("Se intentó asignar un valor al campo sólo de lectura '{$campo}'.", $this->clase_actual);
+                    throw new ElementoException("Se intentó asignar un valor al campo sólo de lectura '{$campo}'.", $this->clase_actual, FDW_ELEMENTO_ERROR_ASIGNARVALOR);
                 }
             }
         }
         else // Si el campo no pertenece al Elemento
         {
-            throw new ElementoException("Se intentó asignar un valor al campo '{$campo}' que no existe en el Elemento.", $this->clase_actual);
+            throw new ElementoException("Se intentó asignar un valor al campo '{$campo}' que no existe en el Elemento.", $this->clase_actual, FDW_ELEMENTO_ERROR_ASIGNARVALOR);
         }
     }
 
@@ -309,7 +309,7 @@ abstract class Elemento
         }
         else // Si el campo no pertenece al Elemento
         {
-            throw new ElementoException("Se intentó obtener el valor del campo '{$campo}' que no pertenece al Elemento '{$this->clase_actual}'.", $this->clase_actual);
+            throw new ElementoException("Se intentó obtener el valor del campo '{$campo}' que no pertenece al Elemento '{$this->clase_actual}'.", $this->clase_actual, FDW_ELEMENTO_ERROR_OBTENERVALOR);
         }
     }
 
@@ -380,7 +380,7 @@ abstract class Elemento
             $campoRequeridoNoProporcionado = $this->ObtenerCampoRequeridoNoProporcionado();
             if ($campoRequeridoNoProporcionado != null) // Si hay un campo requerido no proporcionado
             {
-                throw new ElementoException("El campo '{$campoRequeridoNoProporcionado}' es requerido y su valor no ha sido proporcionado en el Elemento '{$this->clase_actual}'.", $this->clase_actual);
+                throw new ElementoException("El campo '{$campoRequeridoNoProporcionado}' es requerido y su valor no ha sido proporcionado en el Elemento '{$this->clase_actual}'.", $this->clase_actual, FDW_ELEMENTO_ERROR_ELEMENTONOVALIDO);
             }
 
             $campoNoValido = $this->ValidarDatos();
@@ -389,7 +389,7 @@ abstract class Elemento
                 $campo = $campoNoValido["campo"];
                 $error = $campoNoValido["error"];
 
-                throw new ElementoException("El campo '{$campo}' no es válido en el Elemento '{$this->clase_actual}'. {$error}", $this->clase_actual);
+                throw new ElementoException("El campo '{$campo}' no es válido en el Elemento '{$this->clase_actual}'. {$error}", $this->clase_actual, FDW_ELEMENTO_ERROR_ELEMENTONOVALIDO);
             }
 
             $this->DispararEvento("AntesDeAplicarCambios");
@@ -432,7 +432,7 @@ abstract class Elemento
         $resultado = $this->base_de_datos->EjecutarSELECT($tabla, $campos, array("id"=>array(array("operador"=>FDW_DATO_BDD_OPERADOR_IGUAL, "operando"=>$id)) ));
         if (!$this->valores = $resultado->ObtenerSiguienteResultado())
         {
-            throw new ElementoException("El Elemento '{$this->clase_actual}' con ID '{$id}' no existe en la base de datos.", $this->clase_actual);
+            throw new ElementoException("El Elemento '{$this->clase_actual}' con ID '{$id}' no existe en la base de datos.", $this->clase_actual, FDW_ELEMENTO_ERROR_OBTENER);
         }
         $resultado->LiberarResultado();
 
@@ -495,7 +495,7 @@ abstract class Elemento
         }
         else // Error al agregar el Elemento
         {
-            throw new ElementoException("Error al agregar el Elemento '{$this->clase_actual}' en la base de datos. " . $this->base_de_datos->ObtenerUltimoError(), $this->clase_actual);
+            throw new ElementoException("Error al agregar el Elemento '{$this->clase_actual}' en la base de datos. " . $this->base_de_datos->ObtenerUltimoError(), $this->clase_actual, FDW_ELEMENTO_ERROR_AGREGAR);
         }
     }
 
@@ -506,7 +506,7 @@ abstract class Elemento
     {
         if (!$this->PedirAutorizacion(FDW_DATO_PERMISO_MODIFICAR))
         {
-            throw new ElementoException("No cuenta con privilegios para modificar el Elemento '{$this->clase_actual}'.", $this->clase_actual);
+            throw new ElementoException("No cuenta con privilegios para modificar el Elemento '{$this->clase_actual}'.", $this->clase_actual, FDW_ELEMENTO_ERROR_MODIFICAR);
         }
 
         $this->DispararEvento("AntesDeModificar");
@@ -547,7 +547,7 @@ abstract class Elemento
         {
             if (!$this->base_de_datos->EjecutarUPDATE($tabla, $campos, $valores, array("id"=>array(array("operador"=>FDW_DATO_BDD_OPERADOR_IGUAL, "operando"=>$id)) ))) // Si ocurre algún error con la consulta
             {
-                throw new ElementoException("Error al modificar el Elemento '{$this->clase_actual}' en la base de datos.", $this->clase_actual);
+                throw new ElementoException("Error al modificar el Elemento '{$this->clase_actual}' en la base de datos.", $this->clase_actual, FDW_ELEMENTO_ERROR_MODIFICAR);
             }
         }
     }
@@ -561,7 +561,7 @@ abstract class Elemento
         {
             $elemento_id = $this->ObtenerValor("id");
 
-            throw new ElementoException("No cuenta con privilegios para eliminar el Elemento '{$this->clase_actual}' con ID '{$elemento_id}'.", $this->clase_actual);
+            throw new ElementoException("No cuenta con privilegios para eliminar el Elemento '{$this->clase_actual}' con ID '{$elemento_id}'.", $this->clase_actual, FDW_ELEMENTO_ERROR_ELIMINAR);
         }
 
         $this->DispararEvento("AntesDeEliminar");
@@ -759,14 +759,14 @@ abstract class Elemento
                 }
                 else // Si el Elemento es nuevo
                 {
-                    throw new ElementoException("El Elemento a asignar no puede ser nuevo.", get_class($elemento_destino));
+                    throw new ElementoException("El Elemento a asignar no puede ser nuevo.", get_class($elemento_destino), FDW_ELEMENTO_ERROR_ASIGNARVALOR);
                 }
             }
             else // Si no se proporciona el elemento
             {
                 if($elemento_destino->informacionDeCampos[$campo_nombre]["requerido"]) // Si el campo es requerido
                 {
-                    throw new ElementoException("El Elemento a asignar no puede ser nulo.", get_class($elemento_destino));
+                    throw new ElementoException("El Elemento a asignar no puede ser nulo.", get_class($elemento_destino), FDW_ELEMENTO_ERROR_ASIGNARVALOR);
                 }
             }
 
@@ -774,7 +774,7 @@ abstract class Elemento
         }
         else // Si el campo no existe en el elemento de destino
         {
-            throw new ElementoException("El campo '{$campo_nombre}' no existe en el Elemento de destino.", get_class($elemento_destino));
+            throw new ElementoException("El campo '{$campo_nombre}' no existe en el Elemento de destino.", get_class($elemento_destino), FDW_ELEMENTO_ERROR_ASIGNARVALOR);
         }
     }
 
