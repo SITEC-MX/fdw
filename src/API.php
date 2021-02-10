@@ -23,7 +23,6 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
     $inicio = $OPENAPI_REQUEST["get"]["inicio"] - 1; // Los registros inician en el 0
     $registros_por_pagina = $OPENAPI_REQUEST["get"]["registros"];
 
-
     $tiene_permiso_obtener = $SESION->PedirAutorizacion($permiso_nombre, FDW_DATO_PERMISO_OBTENER);
     if($tiene_permiso_obtener) // Si tiene el permiso para obtener los datos del módulo
     {
@@ -215,12 +214,17 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
 
                     $total = $modulo_conteo->ObtenerConteo();
 
+                    $resultado = array
+                    (
+                        "_" => $_,
+                        "total" => $total,
+                        "filtrados" => $filtrados,
+                        "registros" => $registros
+                    );
+
                     $estado["estado"] = OK;
                     $estado["mensaje"] = "OK";
-                    $estado["_"] = $_;
-                    $estado["total"] = $total;
-                    $estado["filtrados"] = $filtrados;
-                    $estado["resultado"] = $registros;
+                    $estado["resultado"] = $resultado;
                 }
             }
             else // Si la cantidad de registros solicitada no es válida
