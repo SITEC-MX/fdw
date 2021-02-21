@@ -171,6 +171,44 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                     }
                 }
 
+                // Porcesamos los filtros
+                $filtro_query = NULL;
+                if(!$hay_error) // Si no hay error en campos ni ordenamiento
+                {
+                    if( isset($OPENAPI_REQUEST["get"]["filtro"]) ) // Si se proporciona un filtro
+                    {
+                        $filtro_query = array();
+
+                        foreach($OPENAPI_REQUEST["get"]["filtro"] as $filtro) // Para cada filtro
+                        {
+                            $filtro_campo = $filtro["nombre"];
+                            $filtro_operador = $filtro["operador"];
+                            $filtro_valor = $filtro["valor"];
+                            $filtro_concatenador = isset($filtro["concatenador"]) ? $filtro["concatenador"] : FDW_DATO_BDD_LOGICA_Y;
+
+                            // Verificamos si el campo existe en el módulo
+                            if( isset($campos_disponibles[$filtro_campo]) ) // Si el campo existe en el módulo
+                            {
+                                $filtro_enviado = array("operador"=>$filtro_operador, "operando"=>$filtro_valor, "tipo"=>$filtro_concatenador);
+
+                                if( isset($filtro_query[$filtro_campo]) ) // Si el filtro ya existe
+                                {
+                                    $filtro_query[$filtro_campo][] = array($filtro_enviado);
+                                }
+                                else // Si el filtro es nuevo
+                                {
+                                    $filtro_query[$filtro_campo] = array($filtro_enviado);
+                                }
+                            }
+                            else // Si el campo no existe en el módulo
+                            {
+                                throw new Exception("Filtro de grupos aún no implementado.");
+                            }
+                        }
+                    }
+                }
+
+
                 if(!$hay_error) // Si no hay error en campos ni ordenamiento ni en filtros
                 {
                     $filtros_conteo = isset($filtro_base) ? $filtro_base : array();
@@ -184,6 +222,11 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                     if($filtro_busqueda) // Si hay filtro de búsqueda
                     {
                         $filtros_datos["grupo-busqueda"] = array("filtros"=>$filtro_busqueda);
+                    }
+
+                    if($filtro_query) // Si hay filtro query
+                    {
+                        $filtros_datos["grupo-query"] = array("filtros"=>$filtro_query);
                     }
 
                     // Query de resultados
