@@ -30,6 +30,9 @@ abstract class Token extends \Mpsoft\FDW\Dato\Elemento
             $ip = Utilidades::ObtenerIPCliente();
             $this->AsignarValorSinValidacion("ip", $ip);
 
+            $HTTP_USER_AGENT = $_SERVER['HTTP_USER_AGENT'];
+            $this->AsignarValorSinValidacion("ua", $HTTP_USER_AGENT);
+
             $tiempo = time();
             $this->AsignarValorSinValidacion("creacion_tiempo", $tiempo);
 
@@ -131,7 +134,8 @@ abstract class Token extends \Mpsoft\FDW\Dato\Elemento
             "usuario_id" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
             "creacion_tiempo" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
             "validohasta_tiempo" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
-            "ip" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>40)
+            "ip" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>40),
+            "ua" => array("requerido" => FALSE, "soloDeLectura" => TRUE, "nombre" => "User-Agent", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>1024)
         );
     }
 }

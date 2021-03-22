@@ -106,6 +106,14 @@ abstract class Sesion
             $token_valido = FALSE;
         }
 
+        // Si el user-agent registrado cambia el token deja de ser válido
+        $HTTP_USER_AGENT = $_SERVER['HTTP_USER_AGENT'];
+        $ua = $token->ObtenerValor("ua");
+        if($HTTP_USER_AGENT != $ua) // Si el UA del token cambió
+        {
+            $token_valido = FALSE;
+        }
+
         return $token_valido;
     }
 
