@@ -99,7 +99,10 @@ abstract class OpenAPI
                     {
                         $php_input = json_decode($php_input_string, TRUE);
 
-                        $parametros_enviados_con_input = OpenAPI::ProcesarBloqueDeVariables($php_input, $metodo_solicitado["body"]);
+                        if($php_input) // Si se proporcionan variables como JSON
+                        {
+                            $parametros_enviados_con_input = OpenAPI::ProcesarBloqueDeVariables($php_input, $metodo_solicitado["body"]);
+                        }
                     }
 
                     // Obtenemos los parámetros enviados con $_POST
