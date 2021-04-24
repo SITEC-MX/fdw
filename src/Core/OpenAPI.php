@@ -242,11 +242,18 @@ abstract class OpenAPI
                             {
                                 foreach($campo_valor as $indice=>$elemento) // Para cada elemento del arreglo
                                 {
-                                    $campo_no_definido = OpenAPI::ValidarSiCampoEstaDefinido($request_respuesta[$campo_nombre]["arreglo"], $elemento, "{$campo_nombre}[{$indice}]");
-
-                                    if($campo_no_definido) // Si se ha encontrado un campo no definido
+                                    if(is_array($request_respuesta[$campo_nombre]["arreglo"])) // Si es un arreglo de objetos
                                     {
-                                        break; // Terminamos la iteraci�n
+                                        $campo_no_definido = OpenAPI::ValidarSiCampoEstaDefinido($request_respuesta[$campo_nombre]["arreglo"], $elemento, "{$campo_nombre}[{$indice}]");
+
+                                        if($campo_no_definido) // Si se ha encontrado un campo no definido
+                                        {
+                                            break; // Terminamos la iteraci�n
+                                        }
+                                    }
+                                    else // Si es un arreglo de tipos primitivos
+                                    {
+                                        // No hay nada que validar aqu�. Si hay error en tipos de datos ser� notificado despu�s.
                                     }
                                 }
                             }
@@ -308,9 +315,26 @@ abstract class OpenAPI
                         {
                             if( $tipo_de_dato_definicion == FDW_DATO_ARRAY ) // Si el campo es un array
                             {
+                                $tipo_de_dato_definicion = $request_respuesta[$campo_nombre]["arreglo"];
+
                                 foreach($estado[$campo_nombre] as $indice=>$elemento) // Para cada elemento del arreglo
                                 {
-                                    $campo_erroneo = OpenAPI::ValidarSiCampoDefinidoEsValido($request_respuesta[$campo_nombre]["arreglo"], $elemento, "{$campo_nombre}[{$indice}]");
+                                    if( is_array($tipo_de_dato_definicion) ) // Si es un arreglo de objetos
+                                    {
+                                        $campo_erroneo = OpenAPI::ValidarSiCampoDefinidoEsValido($request_respuesta[$campo_nombre]["arreglo"], $elemento, "{$campo_nombre}[{$indice}]");
+                                    }
+                                    else // Si es un arreglo de objetos primitivos
+                                    {
+                                        $tipo_de_dato_valor = BdD::ObtenerTipoDeDato($elemento);
+
+                                        if($tipo_de_dato_valor !== $tipo_de_dato_definicion) // Si el tipo de dato enviado no coincide con lo esperado
+                                        {
+                                            // Si se especifica prefijo padre
+                                            $campo_erroneo = $prefijo_padre ?
+                                                "{$prefijo_padre}.{$campo_nombre}[{$indice}]" :
+                                                "{$campo_nombre}[{$indice}]";
+                                        }
+                                    }
 
                                     if($campo_erroneo) // Si hay un campo err�neo
                                     {
