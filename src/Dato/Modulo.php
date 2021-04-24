@@ -49,7 +49,6 @@ abstract class Modulo
 
         $camposSolicitados = $campos ? $campos : $this->_ObtenerCamposPredeterminados();
 
-        $this->ordenamiento = $ordenamiento;
         $this->inicioONumeroDeRegistros = $inicioONumeroDeRegistros;
         $this->numeroDeRegistros = $numeroDeRegistros;
 
@@ -76,9 +75,47 @@ abstract class Modulo
                 $tabla = "t";
             }
 
-
             $this->campos[] = "{$tabla}.{$campo}";
         }
+
+
+
+        /* Verificamos que los campos de ordenamiento sean válidos */
+        if($ordenamiento)
+        {
+            $this->ordenamiento = array();
+
+            foreach($ordenamiento as $campo_orden) // Para cada campo de ordenamiento
+            {
+                $e_c_o = explode(" ", $campo_orden);
+
+                if( count($e_c_o) > 2) // Si se envían más campos de los esperados para el ordenamiento
+                {
+                    throw new ModuloException("El ordenamiento proporcionado no es válido.", $this->clase_actual);
+                }
+
+                $campo = $e_c_o[0];
+                $orden = isset($e_c_o[1]) ? $e_c_o[1] : "";
+
+                if( !isset($this->informacionDeCampos[$campo]) ) // Si el campo no existe
+                {
+                    throw new ModuloException("El campo '{$campo}' no pertenece al Módulo.", $this->clase_actual);
+                }
+
+                if(isset($this->informacionDeCampos[$campo]["identificadorJoin"])) // Si el campo pertenece a otra tabla
+                {
+                    $tabla = $this->informacionDeCampos[$campo]["identificadorJoin"];
+                    $campo = $this->informacionDeCampos[$campo]["campoExterno"];
+                }
+                else // Si el campo pertenece a la tabla de trabajo
+                {
+                    $tabla = "t";
+                }
+
+                $this->ordenamiento[] = "{$tabla}.{$campo} {$orden}";
+            }
+        }
+
 
         $this->filtros = isset($filtros) ? $this->ConstruirFiltros($filtros) : array();
 
