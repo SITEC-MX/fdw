@@ -181,7 +181,7 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
 
                         foreach($OPENAPI_REQUEST["get"]["filtro"] as $filtro) // Para cada filtro
                         {
-                            $filtro_campo = $filtro["nombre"];
+                            $filtro_campo = $filtro["campo"];
                             $filtro_operador = $filtro["operador"];
                             $filtro_valor = $filtro["valor"];
                             $filtro_concatenador = isset($filtro["concatenador"]) ? $filtro["concatenador"] : FDW_DATO_BDD_LOGICA_Y;
