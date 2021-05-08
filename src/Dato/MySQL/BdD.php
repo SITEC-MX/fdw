@@ -415,7 +415,6 @@ class BdD extends \Mpsoft\FDW\Dato\BdD
                                 if(is_a($filtro["operando"], 'DateTime')) // Si el operador es un DateTime
                                 {
                                     $operando_str = Parametro::LimpiarValor($filtro["operando"], FDW_DATO_STRING);
-                                    $operando_str = substr($operando_str, 0, 10);
 
                                     $operando = "'{$operando_str}'";
                                 }
