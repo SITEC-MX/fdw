@@ -211,6 +211,11 @@ abstract class BdD
                         if( is_string($valor) ) // Si el valor es string
                         {
                             $valor = new DateTime($valor);
+
+                            if($tipoDeDato == FDW_DATO_DATE) // Si se está convirtiendo a fecha
+                            {
+                                $valor->setTime(0,0,0,0);
+                            }
                         }
                         else // Si el valor no es string
                         {
