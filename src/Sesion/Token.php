@@ -138,4 +138,9 @@ abstract class Token extends \Mpsoft\FDW\Dato\Elemento
             "ua" => array("requerido" => FALSE, "soloDeLectura" => TRUE, "nombre" => "User-Agent", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>1024)
         );
     }
+
+    public static function ObtenerNombrePermiso():string
+    {
+        return "Token";
+    }
 }

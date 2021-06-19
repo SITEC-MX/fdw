@@ -46,4 +46,13 @@ abstract class Usuario extends \Mpsoft\FDW\Dato\ElementoSoloLectura
 
         return $campos;
     }
+
+    /**
+     * Obtiene el nombre de la tabla en la base de datos utilizada por el Elemento
+     * @return string
+     */
+    public static function ObtenerNombreTabla():string
+    {
+        return "usuario";
+    }
 }

@@ -45,7 +45,9 @@ abstract class Tokenes extends \Mpsoft\FDW\Dato\Modulo
             "creacion_tiempo" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
             "validohasta_tiempo" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_INT),
             "ip" => array("requerido" => TRUE, "soloDeLectura" => TRUE, "nombre" => "ID del usuario", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>40),
-            "ua" => array("requerido" => FALSE, "soloDeLectura" => TRUE, "nombre" => "User-Agent", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>1024)
+            "ua" => array("requerido" => FALSE, "soloDeLectura" => TRUE, "nombre" => "User-Agent", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>1024),
+
+            "usuario_nombre" => array("requerido" => false, "soloDeLectura" => false, "nombre" => "Nombre del usuario", "tipoDeDato" => FDW_DATO_STRING, "tamanoMaximo"=>200, "identificadorJoin"=>"u", "campoExterno"=>"nombre")
         );
     }
 
@@ -55,7 +57,10 @@ abstract class Tokenes extends \Mpsoft\FDW\Dato\Modulo
      */
     public static function ObtenerJoins():?array
     {
-        return array();
+        return array
+        (
+            "u" => array("tipo"=>"INNER", "tabla"=>Usuario::ObtenerNombreTabla(), "campoInterno" => "usuario_id", "campoExterno"=>"id")
+        );
     }
 
     /**
@@ -65,5 +70,13 @@ abstract class Tokenes extends \Mpsoft\FDW\Dato\Modulo
     public static function ObtenerCamposPredeterminados():array
     {
         return array("id");
+    }
+
+    /**
+     * Obtiene el nombre del permiso del Modulo
+     */
+    public static function ObtenerNombrePermiso():string
+    {
+        return "Token";
     }
 }

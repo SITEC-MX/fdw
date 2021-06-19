@@ -129,6 +129,18 @@ abstract class Sesion
         return $token_str;
     }
 
+    public function ObtenerTokenID():?int
+    {
+        $token_id = NULL;
+
+        if($this->token) // Si hay token
+        {
+            $token_id = $this->token->ObtenerValor("id");
+        }
+
+        return $token_id;
+    }
+
 
 
 
