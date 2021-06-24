@@ -1,6 +1,6 @@
 <?php
 /**
- * Sistemas Especializados e Innovaci�n Tecnol�gica, SA de CV
+ * Sistemas Especializados e Innovación Tecnológica, SA de CV
  * Mpsoft.FDW - Framework de Desarrollo Web para PHP
  *
  * v.2.0.0.0 - 2020-06-28
@@ -10,7 +10,7 @@ namespace Mpsoft\FDW\Core;
 use Mpsoft\FDW\Dato\BdD;
 
 /**
- * Compatibilidad de FDW con la especificaci�n OpenAPI
+ * Compatibilidad de FDW con la especificación OpenAPI
  */
 abstract class OpenAPI
 {
@@ -18,15 +18,15 @@ abstract class OpenAPI
     {
         /* Obtenemos la llamada solicitada */
         $LLAMADASOLICITADA = substr($_SERVER["REQUEST_URI"], 1); // Sin / al inicio
-        $INDICE_PARAMETRO = strpos($LLAMADASOLICITADA, "?"); // Quitamos los par�metros recibidos por $_GET
-        if($INDICE_PARAMETRO !== FALSE) // Si hay par�metros
+        $INDICE_PARAMETRO = strpos($LLAMADASOLICITADA, "?"); // Quitamos los parámetros recibidos por $_GET
+        if($INDICE_PARAMETRO !== FALSE) // Si hay parámetros
         {
             $LLAMADASOLICITADA = substr($LLAMADASOLICITADA, 0, $INDICE_PARAMETRO);
         }
 
         $llamada_solicitada = NULL;
 
-        // Determinamos qu� llamada de la definici�n son posibles por la URL
+        // Determinamos qué llamada de la definición son posibles por la URL
         $pm_matches = NULL;
         foreach($definicion_de_llamadas as $url=>$definicion) // Para cada llamada disponible
         {
@@ -38,11 +38,11 @@ abstract class OpenAPI
         }
 
         $llamada = NULL;
-        if($llamada_solicitada) // Si se obtiene la defici�n de la llamada solicitada
+        if($llamada_solicitada) // Si se obtiene la defición de la llamada solicitada
         {
             // Procesamos las variables de la URL
             $variable = array(); // Las variables proporcionadas en la url
-            foreach($llamada_solicitada["variables"] as $variable_nombre=>$variable_tipo) // Para cada variable disponible en la definici�n
+            foreach($llamada_solicitada["variables"] as $variable_nombre=>$variable_tipo) // Para cada variable disponible en la definición
             {
                 if( isset($pm_matches[$variable_nombre]) ) // Si se define la variable
                 {
@@ -54,7 +54,7 @@ abstract class OpenAPI
             $llamada["script_php_ruta"] = $llamada_solicitada["script_php_ruta"];
 
             $REQUEST_METHOD = $_SERVER["REQUEST_METHOD"];
-            if( isset($llamada_solicitada["metodos"][$REQUEST_METHOD]) ) // Si el m�todo solicitado est� definido
+            if( isset($llamada_solicitada["metodos"][$REQUEST_METHOD]) ) // Si el método solicitado está definido
             {
                 $llamada["metodo"] = $REQUEST_METHOD;
 
@@ -63,9 +63,9 @@ abstract class OpenAPI
 
 
                 // Procesamos los valores porporcionados en $_GET
-                $get = array(); // La informaci�n definida en $_GET
+                $get = array(); // La información definida en $_GET
                 $get_no_proporcionado = NULL;
-                if(isset($metodo_solicitado["get"])) // Si el m�todo tiene campos en GET
+                if(isset($metodo_solicitado["get"])) // Si el método tiene campos en GET
                 {
                     foreach($metodo_solicitado["get"] as $get_nombre=>$get_contenedor) // Para cada campo definido
                     {
@@ -78,7 +78,7 @@ abstract class OpenAPI
                             if($get_contenedor["requerido"]) // Si el campo es requerido
                             {
                                 $get_no_proporcionado = $get_nombre;
-                                break; // Terminamos, no es necesario procesar los dem�s campo.
+                                break; // Terminamos, no es necesario procesar los demás campos.
                             }
                         }
                     }
@@ -87,15 +87,15 @@ abstract class OpenAPI
                 $llamada["get_no_proporcionado"] = $get_no_proporcionado;
 
                 // Procesamos los valores porporcionados en $_POST
-                $body = array(); // La informaci�n definida en $_POST
+                $body = array(); // La información definida en $_POST
                 $body_no_proporcionado = NULL;
-                if(isset($metodo_solicitado["body"])) // Si el m�todo tiene campos en POST
+                if(isset($metodo_solicitado["body"])) // Si el método tiene campos en POST
                 {
-                    // Obtenemos los par�metros enviados por php://input
+                    // Obtenemos los parámetros enviados por php://input
                     $parametros_enviados_con_input = array();
                     $php_input = NULL;
                     $php_input_string = file_get_contents("php://input");
-                    if($php_input_string) // Si hay par�metros de entrada mediante php://input
+                    if($php_input_string) // Si hay parámetros de entrada mediante php://input
                     {
                         $php_input = json_decode($php_input_string, TRUE);
 
@@ -105,9 +105,9 @@ abstract class OpenAPI
                         }
                     }
 
-                    // Obtenemos los par�metros enviados con $_POST
+                    // Obtenemos los parámetros enviados con $_POST
                     $parametros_enviados_con_post = array();
-                    if($_POST) // Si hay par�metros de entrada mediante $_POST
+                    if($_POST) // Si hay parámetros de entrada mediante $_POST
                     {
                         $parametros_enviados_con_post = OpenAPI::ProcesarBloqueDeVariables($_POST, $metodo_solicitado["body"]);
                     }
@@ -117,7 +117,7 @@ abstract class OpenAPI
                     // Procesamos los archivos enviados
                     foreach($_FILES as $body_nombre=>$archivo_contenedor) // Para cada archivo proporcionado
                     {
-                        // Si el campo est� definido y es un archivo
+                        // Si el campo está definido y es un archivo
                         if( isset($metodo_solicitado["body"][$body_nombre]) && $metodo_solicitado["body"][$body_nombre]["tipo"] === FDW_DATO_FILE )
                         {
                             $body[$body_nombre] = $archivo_contenedor;
@@ -130,7 +130,7 @@ abstract class OpenAPI
                         if($body_contenedor["requerido"] && !isset($body[$body_nombre])) // Si el campo es requerido y no se proporciona
                         {
                             $body_no_proporcionado = $body_nombre;
-                            break; // Terminamos, no es necesario procesar los dem�s campo.
+                            break; // Terminamos, no es necesario procesar los demás campos.
                         }
                     }
                 }
@@ -140,7 +140,7 @@ abstract class OpenAPI
                 $llamada["respuesta"] = $metodo_solicitado["respuesta"];
                 $llamada["respuesta_tipo"] = $metodo_solicitado["respuesta_tipo"];
             }
-            else // Si el m�todo solicitado no est� definido
+            else // Si el método solicitado no está definido
             {
                 $llamada["metodo"] = "XXX";
             }
@@ -200,19 +200,19 @@ abstract class OpenAPI
     {
         $error = NULL;
 
-        // Validamos que todos los campos del estado est�n definidos
+        // Validamos que todos los campos del estado están definidos
         $campo_no_definido = OpenAPI::ValidarSiCampoEstaDefinido($request["respuesta"], $estado);
-        if($campo_no_definido) // Si el campo no est� definido
+        if($campo_no_definido) // Si el campo no está definido
         {
-            $error = "Error de implementaci�n. El campo '{$campo_no_definido}' no est� definido.";
+            $error = "Error de implementación. El campo '{$campo_no_definido}' no está definido.";
         }
-        else // Si todos los campos est�n definidos
+        else // Si todos los campos están definidos
         {
             // Validamos que todos los campos requeridos se proporcionen
             $campo_no_proporcionado = OpenAPI::ValidarSiCampoDefinidoEsValido($request["respuesta"], $estado);
-            if($campo_no_proporcionado) // Si el campo no est� definido
+            if($campo_no_proporcionado) // Si el campo no está definido
             {
-                $error = "Error de implementaci�n. El campo '{$campo_no_proporcionado}' no es v�lido o no se proporcion�.";
+                $error = "Error de implementación. El campo '{$campo_no_proporcionado}' no es válido o no se proporcionó.";
             }
         }
 
@@ -227,7 +227,7 @@ abstract class OpenAPI
         {
             foreach($estado as $campo_nombre=>$campo_valor) // Para cada campo del estado
             {
-                if( isset($request_respuesta[$campo_nombre]) ) // Si el campo existe en la definici�n
+                if( isset($request_respuesta[$campo_nombre]) ) // Si el campo existe en la definición
                 {
                     if( is_array($campo_valor) ) // Si el campo es un array
                     {
@@ -248,12 +248,12 @@ abstract class OpenAPI
 
                                         if($campo_no_definido) // Si se ha encontrado un campo no definido
                                         {
-                                            break; // Terminamos la iteraci�n
+                                            break; // Terminamos la iteración
                                         }
                                     }
                                     else // Si es un arreglo de tipos primitivos
                                     {
-                                        // No hay nada que validar aqu�. Si hay error en tipos de datos ser� notificado despu�s.
+                                        // No hay nada que validar aquí. Si hay error en tipos de datos será notificado después.
                                     }
                                 }
                             }
@@ -268,7 +268,7 @@ abstract class OpenAPI
                         // Esto es un error pero no es nuestra responsabilidad notificarlo.
                     }
                 }
-                else // Si el campo no existe en la definici�n
+                else // Si el campo no existe en la definición
                 {
                     // Si se especifica prefijo padre
                     $campo_no_definido = $prefijo_padre ?
@@ -292,7 +292,7 @@ abstract class OpenAPI
 
         if(is_array($estado)) // Si se proporciona un estado que es array (lo que se espera)
         {
-            foreach($request_respuesta as $campo_nombre=>$campo_definicion) // Para cada campo de la definici�n
+            foreach($request_respuesta as $campo_nombre=>$campo_definicion) // Para cada campo de la definición
             {
                 if( isset($estado[$campo_nombre]) ) // Si el campo existe en la respuesta
                 {
@@ -336,9 +336,9 @@ abstract class OpenAPI
                                         }
                                     }
 
-                                    if($campo_erroneo) // Si hay un campo err�neo
+                                    if($campo_erroneo) // Si hay un campo erróneo
                                     {
-                                        break; // Terminamos la iteraci�n
+                                        break; // Terminamos la iteración
                                     }
                                 }
                             }
