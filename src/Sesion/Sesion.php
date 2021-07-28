@@ -141,6 +141,18 @@ abstract class Sesion
         return $token_id;
     }
 
+    public function ObtenerTokenValidoHasta():?int
+    {
+        $token_validohasta = NULL;
+
+        if($this->token) // Si hay token
+        {
+            $token_validohasta = $this->token->ObtenerValor("validohasta_tiempo");
+        }
+
+        return $token_validohasta;
+    }
+
 
 
 
