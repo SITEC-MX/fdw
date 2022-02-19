@@ -229,6 +229,22 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                         $filtros_datos["grupo-query"] = array("filtros"=>$filtro_query);
                     }
 
+                    $campos_del_modulo = $modulo_clase::ObtenerInformacionDeCampos();
+                    $campos_a_transformar = array();
+                    
+                    foreach($campos as $campo) // Para cada campo
+                    {
+                        if( isset($campos_del_modulo[$campo]) ) // Si el campo está definido
+                        {
+                            $campo_informacion = $campos_del_modulo[$campo];
+
+                            if($campo_informacion["tipoDeDato"] == FDW_DATO_DATE || $campo_informacion["tipoDeDato"] == FDW_DATO_DATETIME)
+                            {
+                                $campos_a_transformar[$campo] = $campo_informacion["tipoDeDato"];
+                            }
+                        }
+                    }
+
                     // Query de resultados
                     $modulo = new $modulo_clase
                         (
@@ -242,6 +258,21 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                     $registros = array();
                     while($elemento = $modulo->ObtenerSiguienteRegistro()) // Mientras haya registros
                     {
+                        if($campos_a_transformar) // Si hay campos a transformar
+                        {
+                            foreach($campos_a_transformar as $campo=>$tipoDeDato) // Para cada campo a transformar
+                            {
+                                if($tipoDeDato == FDW_DATO_DATE) // Si el campo es fecha
+                                {
+                                    $elemento[$campo] = $elemento[$campo]->format("Y-m-d");
+                                }
+                                else // Si el campo es fecha-hora
+                                {
+                                    $elemento[$campo] = $elemento[$campo]->format("Y-m-d H:i:s");
+                                }
+                            }
+                        }
+
                         $registros[] = $elemento;
                     }
 
