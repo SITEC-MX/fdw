@@ -234,7 +234,14 @@ abstract class OpenAPI
                         $tipo_definicion = $request_respuesta[$campo_nombre]["tipo"];
                         if($tipo_definicion === FDW_DATO_OBJECT) // Si el valor es un objeto
                         {
-                            $campo_no_definido = OpenAPI::ValidarSiCampoEstaDefinido($request_respuesta[$campo_nombre]["propiedades"], $estado[$campo_nombre], $campo_nombre);
+                            $ruta_a_verificar = $prefijo_padre ? "{$prefijo_padre}.{$campo_nombre}" : $campo_nombre;
+
+                            $campo_no_definido = OpenAPI::ValidarSiCampoEstaDefinido($request_respuesta[$campo_nombre]["propiedades"], $estado[$campo_nombre], $ruta_a_verificar);
+
+                            if($campo_no_definido) // Si se ha encontrado un campo no definido
+                            {
+                                break; // Terminamos la iteración
+                            }
                         }
                         else // Si el valor no es un objeto
                         {
@@ -244,7 +251,9 @@ abstract class OpenAPI
                                 {
                                     if(is_array($request_respuesta[$campo_nombre]["arreglo"])) // Si es un arreglo de objetos
                                     {
-                                        $campo_no_definido = OpenAPI::ValidarSiCampoEstaDefinido($request_respuesta[$campo_nombre]["arreglo"], $elemento, "{$campo_nombre}[{$indice}]");
+                                        $ruta_a_verificar = $prefijo_padre ? "{$prefijo_padre}.{$campo_nombre}[{$indice}]" : "{$campo_nombre}[{$indice}]";
+
+                                        $campo_no_definido = OpenAPI::ValidarSiCampoEstaDefinido($request_respuesta[$campo_nombre]["arreglo"], $elemento, $ruta_a_verificar);
 
                                         if($campo_no_definido) // Si se ha encontrado un campo no definido
                                         {
