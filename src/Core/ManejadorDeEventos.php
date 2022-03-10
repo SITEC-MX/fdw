@@ -58,7 +58,7 @@ class ManejadorDeEventos
             }
             else // Si el identificador ya fue asignado
             {
-                throw new Exception("El identificador '{$identificador}' no está disponible.");
+                throw new Exception("El identificador de evento '{$identificador}' ya fue asignado.");
             }
         }
         else // Si el evento no está definido
