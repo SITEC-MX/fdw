@@ -193,7 +193,7 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
 
                                 if( isset($filtro_query[$filtro_campo]) ) // Si el filtro ya existe
                                 {
-                                    $filtro_query[$filtro_campo][] = array($filtro_enviado);
+                                    $filtro_query[$filtro_campo][] = $filtro_enviado;
                                 }
                                 else // Si el filtro es nuevo
                                 {
