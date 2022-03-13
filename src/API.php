@@ -68,7 +68,10 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                 {
                     if( isset($OPENAPI_REQUEST["get"]["ordenamiento_campos"]) ) // Si se solicitan campos específicos
                     {
-                        $ordenamientos_solicitados = explode(",", $OPENAPI_REQUEST["get"]["ordenamiento_campos"]);
+                        // Los campos se pueden proporcionar como array en /query o como string en /modulo
+                        $ordenamientos_solicitados = is_array($OPENAPI_REQUEST["get"]["ordenamiento_campos"]) ? 
+                                                        $OPENAPI_REQUEST["get"]["ordenamiento_campos"] :
+                                                        explode(",", $OPENAPI_REQUEST["get"]["ordenamiento_campos"]);
 
                         $ordenamiento = array();
                         foreach($ordenamientos_solicitados as $campo) // Para cada campo solicitado
