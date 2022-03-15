@@ -42,11 +42,11 @@ abstract class OpenAPI
         {
             // Procesamos las variables de la URL
             $variable = array(); // Las variables proporcionadas en la url
-            foreach($llamada_solicitada["variables"] as $variable_nombre=>$variable_tipo) // Para cada variable disponible en la definición
+            foreach($llamada_solicitada["variables"] as $variable_nombre=>$variable_contenedor) // Para cada variable disponible en la definición
             {
                 if( isset($pm_matches[$variable_nombre]) ) // Si se define la variable
                 {
-                    $variable[$variable_nombre] = Parametro::LimpiarValor($pm_matches[$variable_nombre], $variable_tipo);
+                    $variable[$variable_nombre] = Parametro::LimpiarValor($pm_matches[$variable_nombre], $variable_contenedor["tipo"]);
                 }
             }
             $llamada = array("variable"=>$variable);
@@ -79,6 +79,13 @@ abstract class OpenAPI
                             {
                                 $get_no_proporcionado = $get_nombre;
                                 break; // Terminamos, no es necesario procesar los demás campos.
+                            }
+                            else // Si el campo no es requerido
+                            {
+                                if(isset($get_contenedor["default"])) // Si se especifica el valor por defecto
+                                {
+                                    $get[$get_nombre] = Parametro::LimpiarValor($get_contenedor["default"], $get_contenedor["tipo"]);
+                                }
                             }
                         }
                     }
