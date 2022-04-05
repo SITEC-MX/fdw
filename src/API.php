@@ -192,6 +192,12 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                             $filtro_valor = $filtro["valor"];
                             $filtro_concatenador = isset($filtro["concatenador"]) ? $filtro["concatenador"] : FDW_DATO_BDD_LOGICA_Y;
 
+                            // Componemos el operando en caso del operador FDW_DATO_BDD_OPERADOR_IN que espera array y se recibe string
+                            if($filtro_operador == FDW_DATO_BDD_OPERADOR_IN)
+                            {
+                                $filtro_valor = explode(",", $filtro_valor);
+                            }
+
                             // Verificamos si el campo existe en el módulo
                             if( isset($campos_disponibles[$filtro_campo]) ) // Si el campo existe en el módulo
                             {
