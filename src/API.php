@@ -156,6 +156,9 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                                 $campo_info = $campos_disponibles[$campo];
                                 $tipoDeDato = $campo_info["tipoDeDato"];
 
+                                // Omitimos la búsqueda en fechas porque provocará un error comparar una fecha con un string que no tenga formato de fecha
+                                if($tipoDeDato == FDW_DATO_DATE || $tipoDeDato == FDW_DATO_DATETIME) {continue;}
+
                                 $operador = NULL;
                                 $operando = NULL;
 
