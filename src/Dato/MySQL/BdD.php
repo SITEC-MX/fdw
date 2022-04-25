@@ -380,7 +380,7 @@ class BdD extends \Mpsoft\FDW\Dato\BdD
 
                     if($filtro["operando"] !== NULL) // Si se especifica el operando
                     {
-                        if(($filtro["operador"] == FDW_DATO_BDD_OPERADOR_IN)) // Si es operador IN
+                        if($filtro["operador"] == FDW_DATO_BDD_OPERADOR_IN || $filtro["operador"] == FDW_DATO_BDD_OPERADOR_NOT_IN) // Si es operador IN o NOT IN
                         {
                             if(is_array($filtro["operando"]))  // Si se proporciona un arreglo
                             {
@@ -399,7 +399,7 @@ class BdD extends \Mpsoft\FDW\Dato\BdD
                             }
                             else // Si no se proporciona un arreglo
                             {
-                                throw new Exception("El operador FDW_DATO_BDD_OPERADOR_IN espera un array como operando.");
+                                throw new Exception("El operador FDW_DATO_BDD_OPERADOR_IN o FDW_DATO_BDD_OPERADOR_NOT_IN espera un array como operando.");
                             }
                         }
                         else // Si no es operador IN
@@ -737,6 +737,8 @@ class BdD extends \Mpsoft\FDW\Dato\BdD
             case FDW_DATO_BDD_OPERADOR_LIKE: $traduccion = "LIKE"; break;
             case FDW_DATO_BDD_OPERADOR_IN: $traduccion = "IN"; break;
             case FDW_DATO_BDD_OPERADOR_IGUAL_BINARIO: $traduccion = "= BINARY"; break;
+            case FDW_DATO_BDD_OPERADOR_NOT_IN: $traduccion = "NOT IN"; break;
+
 
             default: throw new BdDException("Operador '{$operador}' no soportado.", get_class($this));
         }
