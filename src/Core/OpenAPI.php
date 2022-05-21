@@ -93,52 +93,65 @@ abstract class OpenAPI
                 $llamada["get"] = $get;
                 $llamada["get_no_proporcionado"] = $get_no_proporcionado;
 
-                // Procesamos los valores porporcionados en $_POST
-                $body = array(); // La información definida en $_POST
+                // Procesamos los valores porporcionados en $_POST (si es que aplica)
+                $body = NULL;
                 $body_no_proporcionado = NULL;
-                if(isset($metodo_solicitado["body"])) // Si el método tiene campos en POST
+                if($REQUEST_METHOD == "POST" || $REQUEST_METHOD == "PATCH") // Si es un método que puede tener cuerpo
                 {
-                    // Obtenemos los parámetros enviados por php://input
-                    $parametros_enviados_con_input = array();
-                    $php_input = NULL;
-                    $php_input_string = file_get_contents("php://input");
-                    if($php_input_string) // Si hay parámetros de entrada mediante php://input
-                    {
-                        $php_input = json_decode($php_input_string, TRUE);
+                    $body_tipo = $metodo_solicitado["body_tipo"];
 
-                        if($php_input) // Si se proporcionan variables como JSON
+                    if($body_tipo == "application/json" || $body_tipo == "multipart/form-data") // Si el body se puede procesar
+                    {
+                        $body = array(); // La información definida en $_POST
+                        if(isset($metodo_solicitado["body"])) // Si el método tiene campos en POST
                         {
-                            $parametros_enviados_con_input = OpenAPI::ProcesarBloqueDeVariables($php_input, $metodo_solicitado["body"]);
+                            // Obtenemos los parámetros enviados por php://input
+                            $parametros_enviados_con_input = array();
+                            $php_input = NULL;
+                            $php_input_string = file_get_contents("php://input");
+                            if($php_input_string) // Si hay parámetros de entrada mediante php://input
+                            {
+                                $php_input = json_decode($php_input_string, TRUE);
+
+                                if($php_input) // Si se proporcionan variables como JSON
+                                {
+                                    $parametros_enviados_con_input = OpenAPI::ProcesarBloqueDeVariables($php_input, $metodo_solicitado["body"]);
+                                }
+                            }
+
+                            // Obtenemos los parámetros enviados con $_POST
+                            $parametros_enviados_con_post = array();
+                            if($_POST) // Si hay parámetros de entrada mediante $_POST
+                            {
+                                $parametros_enviados_con_post = OpenAPI::ProcesarBloqueDeVariables($_POST, $metodo_solicitado["body"]);
+                            }
+
+                            $body = array_merge($parametros_enviados_con_post, $parametros_enviados_con_input);
+
+                            // Procesamos los archivos enviados
+                            foreach($_FILES as $body_nombre=>$archivo_contenedor) // Para cada archivo proporcionado
+                            {
+                                // Si el campo está definido y es un archivo
+                                if( isset($metodo_solicitado["body"][$body_nombre]) && $metodo_solicitado["body"][$body_nombre]["tipo"] === FDW_DATO_FILE )
+                                {
+                                    $body[$body_nombre] = $archivo_contenedor;
+                                }
+                            }
+
+                            // Verificamos que todos los campos requeridos se hayan proporcionado
+                            foreach($metodo_solicitado["body"] as $body_nombre=>$body_contenedor) // Para cada campo disponible
+                            {
+                                if($body_contenedor["requerido"] && !isset($body[$body_nombre])) // Si el campo es requerido y no se proporciona
+                                {
+                                    $body_no_proporcionado = $body_nombre;
+                                    break; // Terminamos, no es necesario procesar los demás campos.
+                                }
+                            }
                         }
                     }
-
-                    // Obtenemos los parámetros enviados con $_POST
-                    $parametros_enviados_con_post = array();
-                    if($_POST) // Si hay parámetros de entrada mediante $_POST
+                    else // Si el cuerpo no puede ser procesado
                     {
-                        $parametros_enviados_con_post = OpenAPI::ProcesarBloqueDeVariables($_POST, $metodo_solicitado["body"]);
-                    }
-
-                    $body = array_merge($parametros_enviados_con_post, $parametros_enviados_con_input);
-
-                    // Procesamos los archivos enviados
-                    foreach($_FILES as $body_nombre=>$archivo_contenedor) // Para cada archivo proporcionado
-                    {
-                        // Si el campo está definido y es un archivo
-                        if( isset($metodo_solicitado["body"][$body_nombre]) && $metodo_solicitado["body"][$body_nombre]["tipo"] === FDW_DATO_FILE )
-                        {
-                            $body[$body_nombre] = $archivo_contenedor;
-                        }
-                    }
-
-                    // Verificamos que todos los campos requeridos se hayan proporcionado
-                    foreach($metodo_solicitado["body"] as $body_nombre=>$body_contenedor) // Para cada campo disponible
-                    {
-                        if($body_contenedor["requerido"] && !isset($body[$body_nombre])) // Si el campo es requerido y no se proporciona
-                        {
-                            $body_no_proporcionado = $body_nombre;
-                            break; // Terminamos, no es necesario procesar los demás campos.
-                        }
+                        $body = file_get_contents("php://input");
                     }
                 }
                 $llamada["body"] = $body;
