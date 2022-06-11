@@ -179,7 +179,11 @@ abstract class OpenAPI
             {
                 if($variable_contenedor["tipo"] === FDW_DATO_OBJECT) // Si el tipo es un objeto
                 {
-                    $variables[$variable_nombre] = OpenAPI::ProcesarBloqueDeVariables($datos[$variable_nombre], $definicion[$variable_nombre]["propiedades"]);
+                    if( is_array($datos[$variable_nombre]) ) // Si los datos proporcionados sí son objeto
+                    {
+                        $variables[$variable_nombre] = OpenAPI::ProcesarBloqueDeVariables($datos[$variable_nombre], $definicion[$variable_nombre]["propiedades"]);
+                    }
+                    // Si los datos proporcionados no son objeto no los procesaremos                    
                 }
                 else // Si el tipo no es un objeto
                 {
