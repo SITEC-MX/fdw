@@ -159,6 +159,12 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                                 // Omitimos la búsqueda en fechas porque provocará un error comparar una fecha con un string que no tenga formato de fecha
                                 if($tipoDeDato == FDW_DATO_DATE || $tipoDeDato == FDW_DATO_DATETIME) {continue;}
 
+                                $tipos_de_dato_numerico = array(FDW_DATO_INT, FDW_DATO_FLOAT, FDW_DATO_DOUBLE);
+                                if( in_array($tipoDeDato, $tipos_de_dato_numerico) && !is_numeric($busqueda)) // Si el tipo de dato es numérico y la búsqueda no lo es
+                                {
+                                    continue;
+                                }
+
                                 $operador = NULL;
                                 $operando = NULL;
 
