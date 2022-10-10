@@ -11,6 +11,17 @@ abstract class Utilidades
 {
     public static function ObtenerIPCliente():string
     {
-        return isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER['REMOTE_ADDR'];
+        $ip = NULL;
+
+        if(isset($_SERVER["HTTP_CF_CONNECTING_IP"])) // Si es una conexión con Cloudflare
+        {
+            $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
+        }
+        else // Si no es una conexión con Cloudflare
+        {
+            $ip = isset($_SERVER["HTTP_X_REAL_IP"]) ? $_SERVER["HTTP_X_REAL_IP"] : $_SERVER['REMOTE_ADDR'];
+        }
+
+        return $ip;
     }
 }
