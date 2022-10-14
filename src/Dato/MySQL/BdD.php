@@ -382,7 +382,7 @@ class BdD extends \Mpsoft\FDW\Dato\BdD
                     {
                         if($filtro["operador"] == FDW_DATO_BDD_OPERADOR_IN || $filtro["operador"] == FDW_DATO_BDD_OPERADOR_NOT_IN) // Si es operador IN o NOT IN
                         {
-                            if(is_array($filtro["operando"]))  // Si se proporciona un arreglo
+                            if(is_array($filtro["operando"]) && count($filtro["operando"]) > 0)  // Si se proporciona un arreglo no vacío
                             {
                                 // Colocamos comillas a los campos que no son enteros
                                 foreach($filtro["operando"] as $indice=>$o)
@@ -397,9 +397,9 @@ class BdD extends \Mpsoft\FDW\Dato\BdD
 
                                 $operando = "({$in})";
                             }
-                            else // Si no se proporciona un arreglo
+                            else // Si no se proporciona un arreglo o se proporciona uno vacío
                             {
-                                throw new Exception("El operador FDW_DATO_BDD_OPERADOR_IN o FDW_DATO_BDD_OPERADOR_NOT_IN espera un array como operando.");
+                                throw new Exception("El operador FDW_DATO_BDD_OPERADOR_IN o FDW_DATO_BDD_OPERADOR_NOT_IN espera un array no vacío como operando.");
                             }
                         }
                         else // Si no es operador IN
