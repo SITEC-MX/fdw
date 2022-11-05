@@ -130,7 +130,13 @@ abstract class Modulo
         {
             if(isset($filtros_del_grupo["filtros"])) // Si es un grupo de filtros
             {
-                $filtros_verificados[$grupo_nombre] = array("filtros"=>$this->ConstruirFiltros($filtros_del_grupo["filtros"]));
+                $tipo_del_filtro = isset($filtros_del_grupo["tipo"]) ? $filtros_del_grupo["tipo"] : NULL;
+
+                $filtros_verificados[$grupo_nombre] = array
+                (
+                    "filtros"=>$this->ConstruirFiltros($filtros_del_grupo["filtros"]), 
+                    "tipo"=>$tipo_del_filtro
+                );
             }
             else // Si es un filtro
             {

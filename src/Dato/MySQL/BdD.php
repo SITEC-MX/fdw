@@ -240,12 +240,13 @@ class BdD extends \Mpsoft\FDW\Dato\BdD
         {
             if(isset($grupo_de_filtros["filtros"])) // Si es un grupo de filtros
             {
-                $subfiltros_prcesados = $this->ProcesarFiltros($grupo_de_filtros["filtros"]);
+                $subfiltros_procesados = $this->ProcesarFiltros($grupo_de_filtros["filtros"]);
 
                 $grupo_nombre = $this->LimpiarCadena($grupo_nombre);
+                $grupo_logica = isset($grupo_de_filtros["tipo"]) ? $grupo_de_filtros["tipo"] : NULL;
 
-                $filtros_procesados[$grupo_nombre] = array("filtros" => $subfiltros_prcesados["filtros"]);
-                $selectores_procesados = array_merge($selectores_procesados, $subfiltros_prcesados["selectores"]);
+                $filtros_procesados[$grupo_nombre] = array("filtros" => $subfiltros_procesados["filtros"], "tipo"=>$grupo_logica);
+                $selectores_procesados = array_merge($selectores_procesados, $subfiltros_procesados["selectores"]);
             }
             else // Si es un filtro de campo
             {
