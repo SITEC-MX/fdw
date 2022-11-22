@@ -139,14 +139,7 @@ abstract class OpenAPI
                             }
 
                             // Verificamos que todos los campos requeridos se hayan proporcionado
-                            foreach($metodo_solicitado["body"] as $body_nombre=>$body_contenedor) // Para cada campo disponible
-                            {
-                                if($body_contenedor["requerido"] && !isset($body[$body_nombre])) // Si el campo es requerido y no se proporciona
-                                {
-                                    $body_no_proporcionado = $body_nombre;
-                                    break; // Terminamos, no es necesario procesar los demás campos.
-                                }
-                            }
+                            $body_no_proporcionado = OpenAPI::ValidarSiCampoDefinidoEsValido($metodo_solicitado["body"], $body);
                         }
                     }
                     else // Si el cuerpo no puede ser procesado
@@ -342,7 +335,9 @@ abstract class OpenAPI
                     {
                         if( $tipo_de_dato_definicion == FDW_DATO_OBJECT ) // Si el campo es un objeto
                         {
-                            $campo_erroneo = OpenAPI::ValidarSiCampoDefinidoEsValido($request_respuesta[$campo_nombre]["propiedades"], $estado[$campo_nombre], $campo_nombre);
+                            $ruta_prefijo_padre = $prefijo_padre ? "{$prefijo_padre}.{$campo_nombre}" : $campo_nombre;
+
+                            $campo_erroneo = OpenAPI::ValidarSiCampoDefinidoEsValido($request_respuesta[$campo_nombre]["propiedades"], $estado[$campo_nombre], $ruta_prefijo_padre);
                         }
                         else // Si el campo no es un objeto
                         {
@@ -354,7 +349,9 @@ abstract class OpenAPI
                                 {
                                     if( is_array($tipo_de_dato_definicion) ) // Si es un arreglo de objetos
                                     {
-                                        $campo_erroneo = OpenAPI::ValidarSiCampoDefinidoEsValido($request_respuesta[$campo_nombre]["arreglo"], $elemento, "{$campo_nombre}[{$indice}]");
+                                        $ruta_prefijo_padre = $prefijo_padre ? "{$prefijo_padre}.{$campo_nombre}[{$indice}]" : "{$campo_nombre}[{$indice}]";
+
+                                        $campo_erroneo = OpenAPI::ValidarSiCampoDefinidoEsValido($request_respuesta[$campo_nombre]["arreglo"], $elemento, $ruta_prefijo_padre);
                                     }
                                     else // Si es un arreglo de objetos primitivos
                                     {
