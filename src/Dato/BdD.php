@@ -7,9 +7,8 @@
  */
 namespace Mpsoft\FDW\Dato;
 
-use Exception;
-
-use DateTime;
+use \DateTime;
+use \Exception;
 
 /**
  * Clase genérica para realizar operaciones sobre una base de datos
@@ -184,7 +183,7 @@ abstract class BdD
                             case "integer":  $valor = (string)$valor; break;
 
                             case "object":
-                                if( is_a($valor, "DateTime") ) // Si el valor no es un DateTime
+                                if( is_a($valor, DateTime::class) ) // Si el valor no es un DateTime
                                 {
                                     $valor = $valor->format("Y-m-d H:i:s"); break;
                                 }
@@ -206,7 +205,7 @@ abstract class BdD
             case FDW_DATO_TIME:
                 if(!is_null($valor)) // Si hay algún valor que convertir
                 {
-                    if( !is_a($valor, "DateTime") ) // Si el valor no es un DateTime
+                    if( !is_a($valor, DateTime::class) ) // Si el valor no es un DateTime
                     {
                         if( is_string($valor) ) // Si el valor es string
                         {
@@ -238,7 +237,7 @@ abstract class BdD
             case "object":
                 switch(get_class($valor))
                 {
-                    case "DateTime":
+                    case DateTime::class:
                         $valor_string = $valor->format("Y-m-d H:i:s");
                         break;
 
@@ -272,8 +271,10 @@ abstract class BdD
             case "object":
                 switch(get_class($valor))
                 {
-                    case "DateTime":
-                        $tipo_de_dato = FDW_DATO_DATETIME; break;
+                    case DateTime::class: // Por convensión de FDW, si una fecha tiene como hora 00:00:00.00 se asume que el tipo de dato es FDW_DATO_DATE; de lo contrario es FDW_DATO_DATETIME
+                        $tiempo = $valor->format("H:i:s.v");
+
+                        $tipo_de_dato = $tiempo == "00:00:00.000" ? FDW_DATO_DATE : FDW_DATO_DATETIME;
                         break;
 
                     default:
