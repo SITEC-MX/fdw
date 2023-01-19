@@ -196,7 +196,7 @@ abstract class Modulo
     {
         $conteo = -1;
 
-        $conteo_resultado = $this->base_de_datos->EjecutarSELECT($this->ObtenerNombreTabla(), array("count(1) conteo"), $this->filtros, $this->ordenamiento, NULL, NULL, $this->enlaces);
+        $conteo_resultado = $this->base_de_datos->EjecutarSELECT($this->ObtenerNombreTabla(), array("count(1) conteo"), $this->filtros, NULL, NULL, NULL, $this->enlaces);
 
         if($conteo_resultado) // Si hay resultado
         {
