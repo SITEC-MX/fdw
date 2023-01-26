@@ -182,10 +182,10 @@ abstract class OpenAPI
                 {
                     if($variable_contenedor["tipo"] === FDW_DATO_ARRAY) // Si el tipo es un array
                     {
+                        $variables[$variable_nombre] = array();
+
                         if( is_array($datos[$variable_nombre]) && count($datos[$variable_nombre]) > 0 ) // Si los datos enviados son arreglo
                         {
-                            $variables[$variable_nombre] = array();
-
                             if( is_array($variable_contenedor["arreglo"]) ) // Si es un arreglo de objetos
                             {
                                 foreach($datos[$variable_nombre] as $array_indice=>$array_value) // Para cada elemento del arreglo enviado
