@@ -330,7 +330,8 @@ abstract class OpenAPI
 
                     if(
                         $tipo_de_dato_definicion == $tipo_de_dato_valor || // Si el tipo es el esperado
-                        ($definicion_es_contenedor && $tipo_de_dato_valor == FDW_DATO_ARRAY) // Si el tipo esperado es contenedor y el valor es un array
+                        ($definicion_es_contenedor && $tipo_de_dato_valor == FDW_DATO_ARRAY) || // Si el tipo esperado es contenedor y el valor es un array
+                        ($tipo_de_dato_definicion == FDW_DATO_FILE && $tipo_de_dato_valor == FDW_DATO_ARRAY) // Los tipos de dato FDW_DATO_FILE se pueden representar como array
                       )
                     {
                         if( $tipo_de_dato_definicion == FDW_DATO_OBJECT ) // Si el campo es un objeto
@@ -369,6 +370,20 @@ abstract class OpenAPI
                                     if($campo_erroneo) // Si hay un campo erróneo
                                     {
                                         break; // Terminamos la iteración
+                                    }
+                                }
+                            }
+                            else // Si el campo no es es array (ni objeto)
+                            {
+                                if($tipo_de_dato_definicion == FDW_DATO_FILE) // Si se está validando un archivo
+                                {
+                                    if(!isset($estado[$campo_nombre]["tmp_name"]) || !is_uploaded_file($estado[$campo_nombre]["tmp_name"])) // Si el archivo no es válido
+                                    {
+                                        // Si se especifica prefijo padre
+                                        $campo_erroneo = $prefijo_padre ?
+                                            "{$prefijo_padre}.{$campo_nombre}" :
+                                            $campo_nombre;
+                                        break;
                                     }
                                 }
                             }
