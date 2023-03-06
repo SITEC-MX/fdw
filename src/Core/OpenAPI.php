@@ -100,41 +100,48 @@ abstract class OpenAPI
                 {
                     $body_tipo = $metodo_solicitado["body_tipo"];
 
-                    if($body_tipo == "application/json" || $body_tipo == "multipart/form-data") // Si el body se puede procesar
+                    if($body_tipo == "application/json" || $body_tipo == "multipart/form-data" || $body_tipo == "x-www-form-urlencoded") // Si el body se puede procesar
                     {
                         $body = array(); // La información definida en $_POST
-                        if(isset($metodo_solicitado["body"])) // Si el método tiene campos en POST
+                        if(isset($metodo_solicitado["body"])) // Si el método tiene campos de entrada
                         {
                             // Obtenemos los parámetros enviados por php://input
-                            $parametros_enviados_con_input = array();
-                            $php_input = NULL;
-                            $php_input_string = file_get_contents("php://input");
-                            if($php_input_string) // Si hay parámetros de entrada mediante php://input
+                            if($body_tipo == "application/json") // Si el body se proporcionará como JSON
                             {
-                                $php_input = json_decode($php_input_string, TRUE);
-
-                                if($php_input) // Si se proporcionan variables como JSON
+                                $php_input = NULL;
+                                $php_input_string = file_get_contents("php://input");
+                                if($php_input_string) // Si hay parámetros de entrada mediante php://input
                                 {
-                                    $parametros_enviados_con_input = OpenAPI::ProcesarBloqueDeVariables($php_input, $metodo_solicitado["body"]);
+                                    $php_input = json_decode($php_input_string, TRUE);
+
+                                    if($php_input) // Si se proporcionan variables como JSON
+                                    {
+                                        $body = OpenAPI::ProcesarBloqueDeVariables($php_input, $metodo_solicitado["body"]);
+                                    }
                                 }
                             }
-
-                            // Obtenemos los parámetros enviados con $_POST
-                            $parametros_enviados_con_post = array();
-                            if($_POST) // Si hay parámetros de entrada mediante $_POST
+                            else // Si el body no se proporcionará como JSON
                             {
-                                $parametros_enviados_con_post = OpenAPI::ProcesarBloqueDeVariables($_POST, $metodo_solicitado["body"]);
-                            }
-
-                            $body = array_merge($parametros_enviados_con_post, $parametros_enviados_con_input);
-
-                            // Procesamos los archivos enviados
-                            foreach($_FILES as $body_nombre=>$archivo_contenedor) // Para cada archivo proporcionado
-                            {
-                                // Si el campo está definido y es un archivo
-                                if( isset($metodo_solicitado["body"][$body_nombre]) && $metodo_solicitado["body"][$body_nombre]["tipo"] === FDW_DATO_FILE )
+                                if($body_tipo == "multipart/form-data" || $body_tipo == "x-www-form-urlencoded") // Si el body se proporcionará como multipart/form-data ó x-www-form-urlencoded
                                 {
-                                    $body[$body_nombre] = $archivo_contenedor;
+                                    // Obtenemos los parámetros enviados con $_POST
+                                    if($_POST) // Si hay parámetros de entrada mediante $_POST
+                                    {
+                                        $body = OpenAPI::ProcesarBloqueDeVariables($_POST, $metodo_solicitado["body"]);
+                                    }
+
+                                    if($body_tipo == "multipart/form-data")
+                                    {
+                                        // Procesamos los archivos enviados
+                                        foreach($_FILES as $body_nombre=>$archivo_contenedor) // Para cada archivo proporcionado
+                                        {
+                                            // Si el campo está definido y es un archivo
+                                            if( isset($metodo_solicitado["body"][$body_nombre]) && $metodo_solicitado["body"][$body_nombre]["tipo"] === FDW_DATO_FILE )
+                                            {
+                                                $body[$body_nombre] = $archivo_contenedor;
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
