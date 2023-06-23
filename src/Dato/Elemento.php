@@ -136,6 +136,14 @@ abstract class Elemento
     }
 
     /**
+     * Forza el Elemento a tener cambios. Este método es útil cuando el Elemento tiene otros Elementos internos con cambios.
+     */
+    public function IndicarQueHayCambiosInternos()
+    {
+        $this->hayCambios = true;
+    }
+
+    /**
      * Verifica si el Elemento contiene el campo especificado.
      * @return boolean Retorna true si el Elemento contiene el campo especificado, de lo contrario retorna false.
      */
