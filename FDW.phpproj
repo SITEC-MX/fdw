@@ -37,6 +37,7 @@
     <Compile Include="src\Dato\MySQL\BdD.php" />
     <Compile Include="src\Dato\MySQL\ResultadoDeConsulta.php" />
     <Compile Include="src\Dato\ResultadoDeConsulta.php" />
+    <Compile Include="src\Herramientas\GeneradorOpenAPI.php" />
     <Compile Include="src\Sesion\Permiso.php" />
     <Compile Include="src\Sesion\Permisos.php" />
     <Compile Include="src\Sesion\RateLimit.php" />
@@ -57,6 +58,7 @@
     <Folder Include="src\Dato\MySQL\" />
     <Folder Include="src\Core\" />
     <Folder Include="src\Dato\" />
+    <Folder Include="src\Herramientas\" />
     <Folder Include="src\Sesion\" />
     <Folder Include="src" />
   </ItemGroup>
