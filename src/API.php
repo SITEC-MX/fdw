@@ -8,6 +8,8 @@
 
 use \Mpsoft\FDW\Core\Parametro;
 
+use \Throwable;
+
 function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $filtro_base = NULL):array
 {
     global $SESION;
@@ -508,7 +510,7 @@ function FDW_POST_Elemento(array $OPENAPI_REQUEST, string $elemento_clase, ?int 
                             {
                                 if($procesar_exception_aplicarcambios) // Si se especifica una función para el procesamiento de la exception
                                 {
-                                    $estado = $ProcesarExceptionAlAplicarCambios($ex);
+                                    $estado = $procesar_exception_aplicarcambios($ex);
                                 }
                                 else // Si la exception no se procesó por $ProcesarExceptionAlAplicarCambios
                                 {
