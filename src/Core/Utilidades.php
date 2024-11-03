@@ -7,6 +7,8 @@
  */
 namespace Mpsoft\FDW\Core;
 
+use \Exception;
+
 abstract class Utilidades
 {
     public static function ObtenerIPCliente():string
@@ -23,5 +25,21 @@ abstract class Utilidades
         }
 
         return $ip;
+    }
+
+    public static function TruncarDecimales(float $valor, int $numero_de_decimales):float
+    {
+        if($numero_de_decimales<0) // Si el número de decimales es negativo
+        {
+            throw new Exception("El número de decimales no puede ser menor que cero.");
+        }
+
+        $factor = 1;
+        for ($i = 0; $i < $numero_de_decimales; $i++) 
+        {
+            $factor *= 10;
+        }
+
+        return intval($valor * $factor) / $factor;
     }
 }
