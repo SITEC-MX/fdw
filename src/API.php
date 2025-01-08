@@ -225,7 +225,43 @@ function FDW_GET_Modulo(array $OPENAPI_REQUEST, string $modulo_clase, ?array $fi
                             }
                             else // Si el campo no existe en el módulo
                             {
-                                throw new Exception("Filtro de grupos aún no implementado.");
+                                // Verificamos si es un filtrado por grupos
+                                if( isset($filtro["grupo"]) ) // Si es un filtrado de grupos
+                                {
+                                    $filtros_del_grupo = array();
+
+                                    foreach($filtro["grupo"] as $grupo) // Para cada filtro del grupo
+                                    {
+                                        $grupo_campo = $grupo["campo"];
+                                        $grupo_operador = $grupo["operador"];
+                                        $grupo_valor = $grupo["valor"];
+                                        $grupo_concatenador = isset($grupo["concatenador"]) ? $grupo["concatenador"] : FDW_DATO_BDD_LOGICA_Y;
+
+                                        if( isset($campos_disponibles[$grupo_campo]) ) // Si el campo existe en el módulo
+                                        {
+                                            $filtro_enviado = array("operador" => $grupo_operador, "operando" => $grupo_valor, "tipo" => $grupo_concatenador);
+
+                                            if (isset($filtros_del_grupo[$grupo_campo])) // Si el filtro ya existe
+                                            {
+                                                $filtros_del_grupo[$grupo_campo][] = $filtro_enviado;
+                                            } 
+                                            else // Si el filtro es nuevo
+                                            {
+                                                $filtros_del_grupo[$grupo_campo] = array($filtro_enviado);
+                                            }
+                                        }
+                                        else // Si el campo no existe
+                                        {
+                                            throw new Exception("Campo del grupo no válido.");
+                                        }
+                                    }
+
+                                    $filtro_query[$filtro_campo] = array("filtros"=>$filtros_del_grupo);
+                                }
+                                else
+                                {
+                                    throw new Exception("Campo no válido.");
+                                }
                             }
                         }
                     }
