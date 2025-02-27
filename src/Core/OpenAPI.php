@@ -335,8 +335,13 @@ abstract class OpenAPI
                     // En contenedores, el tipo-valor siempre es array
                     $definicion_es_contenedor = $tipo_de_dato_definicion === FDW_DATO_OBJECT || $tipo_de_dato_definicion === FDW_DATO_ARRAY;
 
+                    // El tipo de dato FDW_DATO_DATETIME también puede ser FDW_DATO_DATE
+
                     if(
                         $tipo_de_dato_definicion == $tipo_de_dato_valor || // Si el tipo es el esperado
+
+                        ($tipo_de_dato_definicion == FDW_DATO_DATETIME && $tipo_de_dato_valor == FDW_DATO_DATE) || // Si la definición espera un DATETIME y proporcionamos un DATE se considera válido
+
                         ($definicion_es_contenedor && $tipo_de_dato_valor == FDW_DATO_ARRAY) || // Si el tipo esperado es contenedor y el valor es un array
                         ($tipo_de_dato_definicion == FDW_DATO_FILE && $tipo_de_dato_valor == FDW_DATO_ARRAY) // Los tipos de dato FDW_DATO_FILE se pueden representar como array
                       )
